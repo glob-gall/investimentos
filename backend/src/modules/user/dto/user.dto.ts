@@ -12,11 +12,12 @@ export class UserDto {
   @IsEmail()
   email: string;
 
-  constructor(user: User) {
-    this.email = user.email;
-    this.name = user.name;
-
-    this.id = user.id;
-    this.role = user.role;
+  constructor(user?: User) {
+    if (user) {
+      this.email = user.email;
+      this.name = user.name;
+      this.id = user.id;
+      this.role = user.role;
+    }
   }
 }

@@ -1,7 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { AuthDto } from './dto/auth.dto';
+import { UserService } from '../user/user.service';
+import { compare } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    @Inject()
+    private readonly userService: UserService,
+    @Inject()
+    private readonly jwtService: JwtService,
+  ) {}
+
   login(): string {
     return 'Hello World!';
   }
@@ -10,7 +22,17 @@ export class AuthService {
     return 'Hello World!';
   }
 
-  validateToken(): string {
-    return 'Hello World!';
+  async validateUser(dto: AuthDto) {
+    const user = await this.userService.findByEmail(dto.email);
+    const isValid = await compare(dto.password, user.password);
+
+    if (!isValid) {
+      throw new UnauthorizedException('user.not_found');
+    }
+    const userDto = new UserDto(user);
+
+    const jwt = this.jwtService.sign({ ...userDto });
+    // return jwt;
+    return { token: jwt };
   }
 }

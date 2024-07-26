@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './model/user.entity';
 import { hash } from 'bcrypt';
 import { UserRole } from './enum/user-role.enum';
-import { UserDto } from './dto/user.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -19,37 +18,55 @@ export class UserService {
   ) {}
 
   async create(dto: CreateUserDto) {
-    const saltOrRounds = 8;
-    const hashedPassord = await hash(dto.password, saltOrRounds);
+    try {
+      const saltOrRounds = 8;
+      const hashedPassord = await hash(dto.password, saltOrRounds);
 
-    const user = new User({
-      email: dto.email,
-      name: dto.name,
-      password: hashedPassord,
-      role: UserRole.User,
-    });
-    const createdUser = await this.usersRepository.save(user);
-
-    return createdUser;
+      const user = new User({
+        email: dto.email,
+        name: dto.name,
+        password: hashedPassord,
+        role: UserRole.User,
+      });
+      const createdUser = await this.usersRepository.save(user);
+      return createdUser;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async findAll() {
     const users = await this.usersRepository.find();
-    const dtos = users.map((u) => new UserDto(u));
-    return dtos;
+    return users;
   }
 
   async findById(id: string) {
     try {
       const user = await this.usersRepository.findOne({
         where: {
-          id: id,
+          id,
         },
       });
 
       if (!user) throw new NotFoundException('user.not_found');
 
-      return new UserDto(user);
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) throw new NotFoundException('user.not_found');
+
+      return user;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -62,7 +79,7 @@ export class UserService {
 
       await this.usersRepository.delete(user);
 
-      return new UserDto(user);
+      return user;
     } catch (error) {
       throw new BadRequestException(error);
     }
