@@ -4,6 +4,7 @@ import { DatabaseModule } from './core/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PortfolioModule } from './modules/portfolio/portfolio.module';
 // import { APP_GUARD } from '@nestjs/core';
 // import { RolesGuard } from './modules/auth/guard/roles.guard';
 
@@ -11,8 +12,9 @@ import { AuthModule } from './modules/auth/auth.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
-    UserModule,
     AuthModule,
+    UserModule,
+    PortfolioModule,
   ],
   controllers: [AppController],
   providers: [
