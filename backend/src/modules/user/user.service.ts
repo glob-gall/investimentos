@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -11,6 +12,7 @@ import { hash } from 'bcrypt';
 import { UserRole } from './enum/user-role.enum';
 import { CreatePortfolioDto } from '../portfolio/dto/create-portfolio.dto';
 import { PortfolioService } from '../portfolio/portfolio.service';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -23,6 +25,11 @@ export class UserService {
     try {
       const saltOrRounds = 8;
       const hashedPassord = await hash(dto.password, saltOrRounds);
+
+      const userWithSameEmail = await this.findByEmail(dto.email);
+      if (userWithSameEmail) {
+        throw new BadRequestException('user.email_already_exist');
+      }
 
       const user = new User({
         email: dto.email,
@@ -48,6 +55,9 @@ export class UserService {
         where: {
           id,
         },
+        relations: {
+          portfolios: true,
+        },
       });
 
       if (!user) throw new NotFoundException('user.not_found');
@@ -65,8 +75,6 @@ export class UserService {
           email,
         },
       });
-
-      if (!user) throw new NotFoundException('user.not_found');
 
       return user;
     } catch (error) {
@@ -92,24 +100,26 @@ export class UserService {
 
     try {
       const portfolio = await this.portfolioService.create(dto);
-      user.portfolios.push(portfolio);
 
-      this.usersRepository.save(user);
+      const oldPortfolios = user.portfolios || [];
+      user.portfolios = [...oldPortfolios, portfolio];
+      await this.usersRepository.save(user);
+
       return user;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
 
-  async removePortFolio(id: string, portfolioId: string) {
-    const user = await this.findById(id);
+  async removePortFolio(userId: string, portfolioId: string) {
+    const portfolio = await this.portfolioService.findById(userId, portfolioId);
+    if (portfolio.id !== userId) {
+      throw new UnauthorizedException('portfolio.not_yours');
+    }
 
     try {
-      const portfolio = await this.portfolioService.deleteById(portfolioId);
-      user.portfolios.filter((p) => p.id !== portfolio.id);
-
-      this.usersRepository.save(user);
-      return user;
+      await this.portfolioService.deleteById(userId, portfolioId);
+      return portfolio;
     } catch (error) {
       throw new BadRequestException(error);
     }

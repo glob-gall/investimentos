@@ -5,23 +5,25 @@ import { PurchaseDto } from 'src/modules/purchase/dto/purchase.dto';
 
 export class PortfolioDto {
   id?: string;
-  user: UserDto;
+  user?: UserDto;
+  slug: string;
 
   purchases: PurchaseDto[];
 
   @IsNotEmpty()
   title: string;
 
-  @IsNotEmpty()
-  slug: string;
-
   constructor(portfolio?: Portfolio) {
     if (portfolio) {
       this.id = portfolio.id;
       this.title = portfolio.title;
       this.slug = portfolio.slug;
-      this.user = new UserDto(portfolio.user);
-      this.purchases = portfolio.purchases.map((p) => new PurchaseDto(p));
+      if (portfolio.user) {
+        this.user = new UserDto(portfolio.user);
+      }
+      if (portfolio.purchases) {
+        this.purchases = portfolio.purchases.map((p) => new PurchaseDto(p));
+      }
     }
   }
 }

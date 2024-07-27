@@ -18,13 +18,13 @@ export class PurchaseService {
   ) {}
 
   async create(dto: CreatePurchaseDto) {
-    const asset = await this.assetService.findByIdentifier(dto.assetIdentifier);
+    const asset = await this.assetService.findOrCreate(dto.assetIdentifier);
 
     try {
       const purchase = new Purchase({
         capital: dto.capital,
         price: dto.price,
-        asset: asset,
+        asset,
         date: new Date(),
       });
 
@@ -44,6 +44,7 @@ export class PurchaseService {
     try {
       const purchase = await this.purchasesRepository.findOne({
         where: { id },
+        relations: { portfolio: true },
       });
 
       if (!purchase) throw new NotFoundException('purchase.not_found');

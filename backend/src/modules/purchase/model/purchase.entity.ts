@@ -5,7 +5,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToOne,
   JoinColumn,
 } from 'typeorm';
 
@@ -14,19 +13,19 @@ export class Purchase {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'numeric', unique: true })
+  @Column('numeric')
   price: number;
 
-  @Column({ type: 'numeric', unique: true })
+  @Column('numeric')
   capital: number;
 
-  @Column({ type: 'date', unique: true })
+  @Column('date')
   date: Date;
 
   @ManyToOne(() => Portfolio, (portfolio) => portfolio.purchases)
   portfolio: Portfolio;
 
-  @OneToOne(() => Asset)
+  @ManyToOne(() => Asset, (asset) => asset.purchases)
   @JoinColumn()
   asset: Asset;
 

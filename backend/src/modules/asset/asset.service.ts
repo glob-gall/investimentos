@@ -18,6 +18,11 @@ export class AssetService {
 
   async create(dto: CreateAssetDto) {
     try {
+      const findedAsset = await this.assetsRepository.findOne({
+        where: { identifier: dto.identifier },
+      });
+      if (findedAsset) return findedAsset;
+
       const asset = new Asset({
         identifier: dto.identifier,
       });
@@ -48,12 +53,33 @@ export class AssetService {
     }
   }
   async findByIdentifier(identifier: string) {
+    console.log(identifier);
+
     try {
       const asset = await this.assetsRepository.findOne({
         where: { identifier },
       });
 
       if (!asset) throw new NotFoundException('asset.not_found');
+
+      return asset;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async findOrCreate(identifier: string) {
+    try {
+      let asset = await this.assetsRepository.findOne({
+        where: { identifier },
+      });
+
+      if (!asset) {
+        asset = new Asset({
+          identifier: identifier,
+        });
+        asset = await this.assetsRepository.save(asset);
+      }
 
       return asset;
     } catch (error) {

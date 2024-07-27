@@ -22,7 +22,9 @@ export class Portfolio {
   @ManyToOne(() => User, (user) => user.portfolios)
   user: User;
 
-  @OneToMany(() => Purchase, (purchase) => purchase.portfolio)
+  @OneToMany(() => Purchase, (purchase) => purchase.portfolio, {
+    cascade: ['update'],
+  })
   purchases?: Purchase[];
 
   constructor(portfolio: Partial<Portfolio>) {

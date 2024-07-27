@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
@@ -52,15 +53,24 @@ export class PortfolioService {
     }
   }
 
-  async findAll() {
-    const portfolios = await this.portfoliosRepository.find();
+  async findAll(userId: string) {
+    const portfolios = await this.portfoliosRepository.find({
+      where: {
+        user: { id: userId },
+      },
+    });
     return portfolios;
   }
 
-  async findById(id: string) {
+  async findById(userId: string, id: string) {
     try {
       const portfolio = await this.portfoliosRepository.findOne({
-        where: { id },
+        where: { id, user: { id: userId } },
+        relations: {
+          purchases: {
+            asset: true,
+          },
+        },
       });
 
       if (!portfolio) throw new NotFoundException('portfolio.not_found');
@@ -71,10 +81,25 @@ export class PortfolioService {
     }
   }
 
-  async deleteById(id: string) {
+  async findBySlug(userId: string, slug: string) {
     try {
       const portfolio = await this.portfoliosRepository.findOne({
-        where: { id },
+        where: { slug, user: { id: userId } },
+        relations: { purchases: { asset: true } },
+      });
+
+      if (!portfolio) throw new NotFoundException('portfolio.not_found');
+
+      return portfolio;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async deleteById(userId: string, id: string) {
+    try {
+      const portfolio = await this.portfoliosRepository.findOne({
+        where: { id, user: { id: userId } },
       });
       if (!portfolio) throw new NotFoundException('portfolio.not_found');
 
@@ -86,18 +111,20 @@ export class PortfolioService {
     }
   }
 
-  async addPurchase(id: string, dto: CreatePurchaseDto) {
-    const portfolio = await this.findById(id);
+  async addPurchase(userId: string, id: string, dto: CreatePurchaseDto) {
+    const portfolio = await this.findById(userId, id);
+
+    const newPurchase = await this.purchaseService.create({
+      assetIdentifier: dto.assetIdentifier,
+      capital: dto.capital,
+      price: dto.price,
+    });
+
+    const oldPurchases = portfolio.purchases || [];
+    portfolio.purchases = [...oldPurchases, newPurchase];
 
     try {
-      const newPurchase = await this.purchaseService.create({
-        assetIdentifier: dto.assetIdentifier,
-        capital: dto.capital,
-        price: dto.price,
-      });
-      portfolio.purchases.push(newPurchase);
-
-      this.portfoliosRepository.save(portfolio);
+      await this.portfoliosRepository.save(portfolio);
 
       return portfolio;
     } catch (error) {
@@ -105,19 +132,21 @@ export class PortfolioService {
     }
   }
 
-  async removePurchase(id: string, purchaseId: string) {
-    const portfolio = await this.findById(id);
+  async removePurchase(userId: string, id: string, purchaseId: string) {
+    const portfolio = await this.findById(userId, id);
     try {
-      const purchase = await this.purchaseService.deleteById(purchaseId);
-      if (!purchase) {
-        throw new NotFoundException('purchase.not_found');
+      const purchase = await this.purchaseService.findById(purchaseId);
+      console.log(purchase);
+
+      if (purchase.portfolio.id !== id) {
+        throw new UnauthorizedException('purchase.not_yours');
       }
+      await this.purchaseService.deleteById(purchaseId);
 
       portfolio.purchases.filter((p) => p.id !== purchase.id);
-
       this.portfoliosRepository.save(portfolio);
 
-      return portfolio;
+      return purchase;
     } catch (error) {
       throw new BadRequestException(error);
     }

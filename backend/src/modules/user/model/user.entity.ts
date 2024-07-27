@@ -19,8 +19,10 @@ export class User {
   @Column({ type: 'enum', default: UserRole.User, enum: UserRole })
   role: UserRole;
 
-  @OneToMany(() => Portfolio, (portfolio) => portfolio.user)
-  portfolios: Portfolio[];
+  @OneToMany(() => Portfolio, (portfolio) => portfolio.user, {
+    cascade: ['update'],
+  })
+  portfolios?: Portfolio[];
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);
