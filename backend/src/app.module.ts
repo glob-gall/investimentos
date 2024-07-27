@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PortfolioModule } from './modules/portfolio/portfolio.module';
+import { AssetModule } from './modules/asset/asset.module';
 // import { APP_GUARD } from '@nestjs/core';
 // import { RolesGuard } from './modules/auth/guard/roles.guard';
 
@@ -15,6 +16,7 @@ import { PortfolioModule } from './modules/portfolio/portfolio.module';
     AuthModule,
     UserModule,
     PortfolioModule,
+    AssetModule,
   ],
   controllers: [AppController],
   providers: [
