@@ -5,10 +5,10 @@ export class Purchase {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'number', unique: true })
+  @Column({ type: 'numeric', unique: true })
   price: number;
 
-  @Column({ type: 'number', unique: true })
+  @Column({ type: 'numeric', unique: true })
   capital: number;
 
   @Column({ type: 'date', unique: true })

@@ -1,17 +1,17 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 import { Purchase } from '../model/purchase.entity';
 
 export class PurchaseDto {
   id?: string;
+  date: Date;
 
   @IsNotEmpty()
+  @IsNumber()
   price: number;
 
   @IsNotEmpty()
+  @IsNumber()
   capital: number;
-
-  @IsNotEmpty()
-  date: Date;
 
   constructor(purchase?: Purchase) {
     if (purchase) {
