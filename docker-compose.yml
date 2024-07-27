@@ -1,0 +1,31 @@
+version: "3"
+services:
+  database:
+    image: postgres
+    container_name: database-investimentos-psql
+    ports:
+      - 5432:5432
+    networks:
+      - investment-network
+    environment:
+      POSTGRES_USER: app-investimentos
+      POSTGRES_DB: app-investimentos
+      POSTGRES_PASSWORD: strongPasswordXD
+  # backend:
+  #   container_name: backend
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./backend:/var/www
+  #     - /var/www/node_modules
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - my-network
+  #   depends_on:
+  #     - "database"
+
+networks:
+  investment-network:
+    driver: bridge
