@@ -47,6 +47,19 @@ export class AssetService {
       throw new BadRequestException(error);
     }
   }
+  async findByIdentifier(identifier: string) {
+    try {
+      const asset = await this.assetsRepository.findOne({
+        where: { identifier },
+      });
+
+      if (!asset) throw new NotFoundException('asset.not_found');
+
+      return asset;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 
   async deleteById(id: string) {
     try {

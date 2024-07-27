@@ -7,19 +7,24 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Purchase } from './model/purchase.entity';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
+import { AssetService } from '../asset/asset.service';
 
 @Injectable()
 export class PurchaseService {
   constructor(
     @InjectRepository(Purchase)
     private purchasesRepository: Repository<Purchase>,
+    private assetService: AssetService,
   ) {}
 
   async create(dto: CreatePurchaseDto) {
+    const asset = await this.assetService.findByIdentifier(dto.assetIdentifier);
+
     try {
       const purchase = new Purchase({
         capital: dto.capital,
         price: dto.price,
+        asset: asset,
         date: new Date(),
       });
 

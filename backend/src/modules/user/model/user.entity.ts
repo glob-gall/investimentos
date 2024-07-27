@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserRole } from '../enum/user-role.enum';
+import { Portfolio } from 'src/modules/portfolio/model/portfolio.entity';
 
 @Entity()
 export class User {
@@ -17,6 +18,9 @@ export class User {
 
   @Column({ type: 'enum', default: UserRole.User, enum: UserRole })
   role: UserRole;
+
+  @OneToMany(() => Portfolio, (portfolio) => portfolio.user)
+  portfolios: Portfolio[];
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);

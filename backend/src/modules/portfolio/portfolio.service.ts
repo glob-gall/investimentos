@@ -9,12 +9,15 @@ import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Portfolio } from './model/portfolio.entity';
 import slugify from 'slugify';
+import { PurchaseService } from '../purchase/purchase.service';
+import { CreatePurchaseDto } from '../purchase/dto/create-purchase.dto';
 
 @Injectable()
 export class PortfolioService {
   constructor(
     @InjectRepository(Portfolio)
     private portfoliosRepository: Repository<Portfolio>,
+    private purchaseService: PurchaseService,
   ) {}
 
   async create(dto: CreatePortfolioDto) {
@@ -76,6 +79,43 @@ export class PortfolioService {
       if (!portfolio) throw new NotFoundException('portfolio.not_found');
 
       await this.portfoliosRepository.delete(portfolio);
+
+      return portfolio;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async addPurchase(id: string, dto: CreatePurchaseDto) {
+    const portfolio = await this.findById(id);
+
+    try {
+      const newPurchase = await this.purchaseService.create({
+        assetIdentifier: dto.assetIdentifier,
+        capital: dto.capital,
+        price: dto.price,
+      });
+      portfolio.purchases.push(newPurchase);
+
+      this.portfoliosRepository.save(portfolio);
+
+      return portfolio;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async removePurchase(id: string, purchaseId: string) {
+    const portfolio = await this.findById(id);
+    try {
+      const purchase = await this.purchaseService.deleteById(purchaseId);
+      if (!purchase) {
+        throw new NotFoundException('purchase.not_found');
+      }
+
+      portfolio.purchases.filter((p) => p.id !== purchase.id);
+
+      this.portfoliosRepository.save(portfolio);
 
       return portfolio;
     } catch (error) {

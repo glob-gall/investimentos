@@ -3,18 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './model/user.entity';
 import { hash } from 'bcrypt';
 import { UserRole } from './enum/user-role.enum';
+import { CreatePortfolioDto } from '../portfolio/dto/create-portfolio.dto';
+import { PortfolioService } from '../portfolio/portfolio.service';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private readonly entityManager: EntityManager,
+    private portfolioService: PortfolioService,
   ) {}
 
   async create(dto: CreateUserDto) {
@@ -79,6 +81,34 @@ export class UserService {
 
       await this.usersRepository.delete(user);
 
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async addPortFolio(id: string, dto: CreatePortfolioDto) {
+    const user = await this.findById(id);
+
+    try {
+      const portfolio = await this.portfolioService.create(dto);
+      user.portfolios.push(portfolio);
+
+      this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async removePortFolio(id: string, portfolioId: string) {
+    const user = await this.findById(id);
+
+    try {
+      const portfolio = await this.portfolioService.deleteById(portfolioId);
+      user.portfolios.filter((p) => p.id !== portfolio.id);
+
+      this.usersRepository.save(user);
       return user;
     } catch (error) {
       throw new BadRequestException(error);
