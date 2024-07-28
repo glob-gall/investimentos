@@ -1,24 +1,23 @@
-"use client"
 import { userStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
+type ProtectedRouteProps = {
+  children: ReactNode
+}
 
-function Home() {
-  const {user} = userStore()
+function ProtectedPage(props:ProtectedRouteProps) {
+  const {children} = props
   const router = useRouter();
+  const { user } = userStore()
 
   useEffect(()=>{
-    if (user) {
-      router.push('/dashboard')
-    } else {
+    if (!user) {
       router.push('/login')
     }
   },[user,router])
 
-  return (
-    <h1>Loading</h1>
-  )
+  return children
 }
 
-export default Home
+export default ProtectedPage
