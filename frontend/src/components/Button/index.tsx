@@ -8,6 +8,7 @@ const buttonVariats = tv({
     color: {
       basic:'bg-zinc-50 hover:bg-zinc-200',
       primary:'bg-green-500 hover:bg-green-600 text-zinc-900 hover:border-green-600',
+      danger:'bg-red-500 hover:bg-red-600 text-zinc-50 hover:border-red-600',
       secondary:'bg-transparent hover:bg-green-500 border-green-500 border text-green-500 hover:text-zinc-900'
     },
     loading: {
@@ -27,12 +28,12 @@ type ButtonProps = ComponentProps<'button'> &
 }
 
 export function Button(props:ButtonProps) {
-  const {title,loading,color,...rest} = props
+  const {title,loading,className,color,...rest} = props
   
   return (
       <button 
         {...rest}
-        className={buttonVariats({color,loading,className:''})}
+        className={buttonVariats({color,loading,className})}
       >
         {loading && (
         <div className="bg-zinc-600 w-4 h-4 animate-spin delay-700 mr-1">

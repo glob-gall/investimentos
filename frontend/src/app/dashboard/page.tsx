@@ -1,10 +1,11 @@
 "use client"
 import ProtectedPage from "@/components/ProtectedRoute";
+import Dashboard from "@/layout/Dashboard";
 
 function DashboardPage() {
   return (
     <ProtectedPage>
-      <p>Dashboard</p>
+      <Dashboard />
     </ProtectedPage>
   )
 }

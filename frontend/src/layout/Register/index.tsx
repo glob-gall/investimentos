@@ -7,7 +7,7 @@ function Register() {
     <div className="flex bg-zinc-700 h-screen">
       <RegisterForm/>
 
-      <div className="bg-green-500 flex-1 h-screen overflow-hidden">
+      <div className="bg-yellow-500 flex-1 h-screen overflow-hidden">
         <Image
           className="h-full w-full min-w-max object-right"
           src='/images/bg-login.png'

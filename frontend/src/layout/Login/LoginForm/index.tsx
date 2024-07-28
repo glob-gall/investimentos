@@ -19,10 +19,10 @@ function LoginForm() {
             alt="background-yellow"
             width={164} 
             height={164} 
-          />
-          <h1 className="text-zinc-50 font-semibold text-2xl">
-            Login 
-          </h1>
+        />
+        <h1 className="text-zinc-50 font-semibold text-2xl">
+          Login 
+        </h1>
 
       </div>
 

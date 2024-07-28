@@ -1,8 +1,8 @@
 import Login from "@/layout/Login"
 import Register from "@/layout/Register"
 
-function LoginPage() {
+function RegisterPage() {
   return ( <Register/>)
 }
 
-export default LoginPage
+export default RegisterPage
