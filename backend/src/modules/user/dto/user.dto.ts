@@ -1,15 +1,18 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { User } from '../model/user.entity';
 import { PortfolioDto } from 'src/modules/portfolio/dto/portfolio.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDto {
   id?: string;
   role?: string;
   portfolios?: PortfolioDto[];
 
+  @ApiProperty()
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
   email: string;

@@ -17,7 +17,9 @@ import { LoggedUser } from 'src/decorators/user.decorator';
 import { User } from '../user/model/user.entity';
 import { UserRole } from '../user/enum/user-role.enum';
 import { PurchaseDto } from '../purchase/dto/purchase.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Portfolios')
 @Controller('portfolios')
 @UseGuards(JwtAuthGuard)
 export class PortfolioController {

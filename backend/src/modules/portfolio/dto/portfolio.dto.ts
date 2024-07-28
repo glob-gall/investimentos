@@ -2,6 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 import { Portfolio } from '../model/portfolio.entity';
 import { UserDto } from 'src/modules/user/dto/user.dto';
 import { PurchaseDto } from 'src/modules/purchase/dto/purchase.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PortfolioDto {
   id?: string;
@@ -10,6 +11,7 @@ export class PortfolioDto {
 
   purchases: PurchaseDto[];
 
+  @ApiProperty()
   @IsNotEmpty()
   title: string;
 

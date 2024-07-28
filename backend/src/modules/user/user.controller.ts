@@ -17,7 +17,9 @@ import { LoggedUser } from 'src/decorators/user.decorator';
 import { User } from './model/user.entity';
 import { UserRole } from './enum/user-role.enum';
 import { PortfolioDto } from '../portfolio/dto/portfolio.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

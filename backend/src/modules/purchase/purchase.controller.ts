@@ -14,7 +14,9 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { LoggedUser } from 'src/decorators/user.decorator';
 import { User } from '../user/model/user.entity';
 import { UserRole } from '../user/enum/user-role.enum';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Purchases')
 @Controller('purchases')
 @UseGuards(JwtAuthGuard)
 export class PurchaseController {

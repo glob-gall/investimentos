@@ -2,7 +2,9 @@ import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { LocalGuard } from './guard/local.guard';
 import { Request } from 'express';
 import { JwtAuthGuard } from './guard/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor() {}

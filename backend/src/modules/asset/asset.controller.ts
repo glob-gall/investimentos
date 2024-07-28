@@ -14,7 +14,8 @@ import { User } from '../user/model/user.entity';
 import { LoggedUser } from 'src/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { UserRole } from '../user/enum/user-role.enum';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Assets')
 @Controller('assets')
 @UseGuards(JwtAuthGuard)
 export class AssetController {
