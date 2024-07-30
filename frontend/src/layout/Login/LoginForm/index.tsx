@@ -19,7 +19,7 @@ const LoginFormSchema = z.object({
   email: z.string({message:'Campo obrigatório'}).email({message:'E-mail invalido'}).min(1),
   password: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}),
 })
-type loginFormData = z.infer<typeof LoginFormSchema>
+type LoginFormData = z.infer<typeof LoginFormSchema>
 
 
 function LoginForm() {
@@ -28,7 +28,7 @@ function LoginForm() {
 
   const [loading, setLoading] = useState(false)
 
-  const handleLogin:SubmitHandler<loginFormData> = useCallback(async (dto:loginFormData)=>{
+  const handleLogin:SubmitHandler<LoginFormData> = useCallback(async (dto:LoginFormData)=>{
     if (loading) return;
 
     try {
@@ -56,7 +56,7 @@ function LoginForm() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<loginFormData>({
+  } = useForm<LoginFormData>({
     resolver:zodResolver(LoginFormSchema)
   })  
 

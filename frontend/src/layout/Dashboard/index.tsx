@@ -1,11 +1,32 @@
 import { Button } from "@/components/Button"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
+import { Modal } from "@/components/Modal"
 import { PortfolioCard } from "@/components/PortfolioCard"
 import { userStore } from "@/store/userStore"
+import { PortfolioFormModal } from "./PortfolioModalForm"
+import { useCallback, useEffect } from "react"
+import { portfolioService } from "@/services/portfolio/portfolio-service"
+import { toast } from "react-toastify"
+
 
 function Dashboard() {
   const {user} = userStore()
+
+  const LoadPortfolios = useCallback(async () =>{
+    try {
+      const resp = await portfolioService.list()
+      console.log(resp);
+      
+    } catch (error) {
+      toast.error('Ocorreu um erro ao carregar as carteiras!')
+    }
+  },[])
+
+  useEffect(()=>{
+    LoadPortfolios()
+  },[LoadPortfolios])
+
   return (
     <>
     <Header/>
@@ -15,10 +36,12 @@ function Dashboard() {
       <div className="flex flex-row items-center justify-between flex-wrap">
         <h1 className="text-zinc-100 font-semibold text-xl">Bem-vindo, {user?.name}!</h1>
         <div className="flex gap-2">
-          <Button title="Criar Nova Carteira" className=""/>
+          {/* <Button title="Criar Nova Carteira" className=""/> */}
+          
+            <PortfolioFormModal/>
         </div>
       </div>
-
+      
     
       <div className="mt-5 flex gap-3 flex-wrap">
         <PortfolioCard

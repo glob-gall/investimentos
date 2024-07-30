@@ -25,7 +25,7 @@ export class HttpService {
   //   }
   // }
   
-  async get(url:string, options:any){
+  async get(url:string, options?:any){
     return await axiosInstance.get(url,options)
     // return this.httpRequest('get',url,options)
     

@@ -23,7 +23,7 @@ const buttonVariats = tv({
   }
 })
 
-type ButtonProps = ComponentProps<'button'> & 
+export type ButtonProps = ComponentProps<'button'> & 
   VariantProps<typeof buttonVariats> & {
   title:string
 }
