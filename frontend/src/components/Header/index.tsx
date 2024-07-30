@@ -1,7 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "../Button";
+import { userStore } from "@/store/userStore";
+import { useCallback } from "react";
 
 export function Header() {
+  const {logout} = userStore()
+
+  const handleLogout = useCallback(()=>{
+    logout()
+  },[logout])
+
   return (
     <div className="p-4 flex flex-row items-center bg-zinc-900">
       <Link href="/dashboard" className="flex flex-row items-center">
@@ -16,6 +25,9 @@ export function Header() {
           Invest+
         </h4>
       </Link>
+
+      <Button title="Logout" className="ml-auto" color="basic" onClick={handleLogout}/>
+
     </div>
   )
 }

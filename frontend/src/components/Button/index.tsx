@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react"
 import { ComponentProps } from "react"
 import { tv, VariantProps } from 'tailwind-variants'
 
@@ -21,7 +22,7 @@ const buttonVariats = tv({
     loading: false
   }
 })
-const className = ''
+
 type ButtonProps = ComponentProps<'button'> & 
   VariantProps<typeof buttonVariats> & {
   title:string
@@ -36,8 +37,8 @@ export function Button(props:ButtonProps) {
         className={buttonVariats({color,loading,className})}
       >
         {loading && (
-        <div className="bg-zinc-600 w-4 h-4 animate-spin delay-700 mr-1">
-
+        <div className=" animate-spin delay-700 mr-1">
+          <LoaderCircle />
         </div>
         )}
         <p className="font-semibold text-center">

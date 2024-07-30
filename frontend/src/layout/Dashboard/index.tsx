@@ -2,8 +2,10 @@ import { Button } from "@/components/Button"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import { PortfolioCard } from "@/components/PortfolioCard"
+import { userStore } from "@/store/userStore"
 
 function Dashboard() {
+  const {user} = userStore()
   return (
     <>
     <Header/>
@@ -11,8 +13,10 @@ function Dashboard() {
         
     <div className="flex-1 max-w-screen-xl">
       <div className="flex flex-row items-center justify-between flex-wrap">
-        <h1 className="text-zinc-100 font-semibold text-xl">DASHBOARD</h1>
-        <Button title="Criar Nova Carteira" className="ml-2"/>
+        <h1 className="text-zinc-100 font-semibold text-xl">Bem-vindo, {user?.name}!</h1>
+        <div className="flex gap-2">
+          <Button title="Criar Nova Carteira" className=""/>
+        </div>
       </div>
 
     

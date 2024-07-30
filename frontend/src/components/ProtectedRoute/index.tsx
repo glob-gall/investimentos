@@ -11,11 +11,11 @@ function ProtectedPage(props:ProtectedRouteProps) {
   const router = useRouter();
   const { user } = userStore()
 
-  // useEffect(()=>{
-  //   if (!user) {
-  //     router.push('/login')
-  //   }
-  // },[user,router])
+  useEffect(()=>{
+    if (!user) {
+      router.push('/login')
+    }
+  },[user,router])
 
   return children
 }
