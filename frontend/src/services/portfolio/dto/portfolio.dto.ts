@@ -2,6 +2,7 @@
 export type Portfolio = {
   id:string,
   title:string,
-  slug:string
+  slug:string,
+  purchases: any[]
 }
 

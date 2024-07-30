@@ -1,7 +1,7 @@
 "use client"
 import { userStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 
 function Home() {
@@ -15,6 +15,7 @@ function Home() {
       router.push('/login')
     }
   },[user,router])
+
 
   return (
     <h1>Loading</h1>

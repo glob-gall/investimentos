@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import httpService from "@/services/http/http-service";
+import { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

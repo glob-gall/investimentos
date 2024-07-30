@@ -5,23 +5,28 @@ import { Modal } from "@/components/Modal"
 import { PortfolioCard } from "@/components/PortfolioCard"
 import { userStore } from "@/store/userStore"
 import { PortfolioFormModal } from "./PortfolioModalForm"
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { portfolioService } from "@/services/portfolio/portfolio-service"
 import { toast } from "react-toastify"
+import { Portfolio } from "@/services/portfolio/dto/portfolio.dto"
+import { portfolioStore } from "@/store/portfolioStore"
 
 
 function Dashboard() {
   const {user} = userStore()
+  const [loading, setLoading] = useState(false)
+  const {portfolios, setPortfolios} = portfolioStore()
 
   const LoadPortfolios = useCallback(async () =>{
+    setLoading(true)
     try {
-      const resp = await portfolioService.list()
-      console.log(resp);
-      
+      const response = await portfolioService.list()
+      setPortfolios(response)      
     } catch (error) {
       toast.error('Ocorreu um erro ao carregar as carteiras!')
     }
-  },[])
+    setLoading(false)
+  },[setPortfolios])
 
   useEffect(()=>{
     LoadPortfolios()
@@ -35,35 +40,30 @@ function Dashboard() {
     <div className="flex-1 max-w-screen-xl">
       <div className="flex flex-row items-center justify-between flex-wrap">
         <h1 className="text-zinc-100 font-semibold text-xl">Bem-vindo, {user?.name}!</h1>
-        <div className="flex gap-2">
-          {/* <Button title="Criar Nova Carteira" className=""/> */}
-          
-            <PortfolioFormModal/>
+        <div className="flex gap-2">          
+            <PortfolioFormModal buttonProps={{title:'Nova Carteira'}}/>
         </div>
       </div>
       
     
-      <div className="mt-5 flex gap-3 flex-wrap">
-        <PortfolioCard
-          title="Criptomoedas"
-          totalPrice={1000.234}
-        />
-        <PortfolioCard
-          title="Ações entrangeiras"
-          totalPrice={564.378}
-        />
-        <PortfolioCard
-          title="Fundos imobiliarios"
-          totalPrice={421.378}
-        />
-        <PortfolioCard
-          title="Ações entrangeiras"
-          totalPrice={564.378}
-        />
-        <PortfolioCard
-          title="Fundos imobiliarios"
-          totalPrice={421.378}
-        />
+      <div className="my-8 flex gap-3 flex-wrap">
+
+        {
+          portfolios.length === 0 ?
+          <div className="flex flex-row w-auto justify-center items-center gap-2 mt-16 mx-auto">
+            <p className="text-zinc-500 text-xl">
+              Você ainda não tem nenhuma carteira salva
+            </p>
+            <PortfolioFormModal buttonProps={{title:'Nova Carteira', color:'basic'}}/>
+          </div>
+
+          : portfolios.map( p => (
+            <PortfolioCard
+              key={p.id}
+              {...p}
+            />
+          ))
+        }
       </div>    
     </div>
     </div>

@@ -1,34 +1,52 @@
 import React, { useCallback, useState } from "react";
 import { X } from "lucide-react";
-import { Button } from "@/components/Button";
+import { Button, ButtonProps } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { useRouter } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { AppError } from "@/services/http/dto/app-error";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { portfolioService } from "@/services/portfolio/portfolio-service";
+import { portfolioStore } from "@/store/portfolioStore";
 
 const PortfolioFormSchema = z.object({
   title: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}),
 })
 type PortfolioFormData = z.infer<typeof PortfolioFormSchema>
 
-export function PortfolioFormModal() {
+type PortfolioFormModalProps = {
+  buttonProps:ButtonProps
+}
+export function PortfolioFormModal(props:PortfolioFormModalProps) {
+  const {setPortfolios} = portfolioStore()
+  const {buttonProps} = props
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = React.useState(false);
 
   const closeModal = useCallback(()=>{setShowModal(false)},[])
   const openModal = useCallback(()=>{setShowModal(true)},[])
 
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<PortfolioFormData>({
+    resolver:zodResolver(PortfolioFormSchema)
+  })  
 
   const handleLogin:SubmitHandler<PortfolioFormData> = useCallback(async (dto:PortfolioFormData)=>{
     if (loading) return;
 
     try {
       setLoading(true)
-      // const {user,token} = await authService.login(dto)
+      const response = await portfolioService.create(dto)
+      console.log(response);
+      setPortfolios(response.portfolios)
+      
       toast.success(`Carteira ${dto.title} criada com sucesso!`);
+      setValue("title",'')
     } catch (err) {
       const error = err as AppError
       if (error.response.status === 401) {
@@ -40,21 +58,12 @@ export function PortfolioFormModal() {
     }
     
     setLoading(false)
-  },[loading])
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<PortfolioFormData>({
-    resolver:zodResolver(PortfolioFormSchema)
-  })  
+  },[loading, setPortfolios,setValue])
 
   return (
     <>
-      <Button 
-        title="Criar Nova Carteira"
+      <Button
+        {...buttonProps}
         onClick={openModal}
       />
 
@@ -83,7 +92,7 @@ export function PortfolioFormModal() {
                 {/*body*/}
                 <div className="relative py-4 flex-auto">
 
-                <form onSubmit={handleSubmit(handleLogin)} className="my-4">
+                <form onSubmit={handleSubmit(handleLogin)} className="mt-4">
                   <Controller
                     control={control}
                     name="title"

@@ -1,18 +1,26 @@
 import axios,  { AxiosInstance } from "axios";
 
-export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 5000,
-});
+// export const axiosInstance = axios.create({
+//   baseURL: process.env.NEXT_PUBLIC_API_URL,
+//   timeout: 5000,
+// });
 
 
-type ErrorResponse = any
+// type ErrorResponse = any
+// type HttpMethod = 'get' | 'post' | 'put' | 'delete'
 
-type HttpMethod = 'get' | 'post' | 'put' | 'delete'
 export class HttpService {
   private axiosInstance: AxiosInstance
   constructor(){
-    this.axiosInstance = axiosInstance
+    this.axiosInstance = axios.create({
+        baseURL: process.env.NEXT_PUBLIC_API_URL,
+        timeout: 5000,
+
+      })
+  }
+
+  async setAuthorization(token:string) {    
+    this.axiosInstance.defaults.headers.Authorization = token
   }
   
   // private async httpRequest(method: HttpMethod, url: string, dto?: any) {
@@ -26,23 +34,23 @@ export class HttpService {
   // }
   
   async get(url:string, options?:any){
-    return await axiosInstance.get(url,options)
+    return await this.axiosInstance.get(url,options)
     // return this.httpRequest('get',url,options)
     
   }
 
   async post(url:string,data:any){
-    return await axiosInstance.post(url,data)
+    return await this.axiosInstance.post(url,data)
     // return this.httpRequest('post',url,data)
   }
 
   async put(url:string,data:any){
-    return await axiosInstance.put(url,data)
+    return await this.axiosInstance.put(url,data)
     // return this.httpRequest('put',url,data)
   }
 
   async delete(url:string){
-    return await axiosInstance.delete(url)
+    return await this.axiosInstance.delete(url)
     // return this.httpRequest('delete',url)
   }
 }

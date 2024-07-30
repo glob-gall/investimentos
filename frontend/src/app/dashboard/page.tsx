@@ -1,6 +1,6 @@
 "use client"
-import ProtectedPage from "@/components/ProtectedRoute";
 import Dashboard from "@/layout/Dashboard";
+import ProtectedPage from "@/layout/ProtectedRoute";
 
 function DashboardPage() {
   return (
