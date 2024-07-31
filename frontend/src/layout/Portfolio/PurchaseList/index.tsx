@@ -1,23 +1,25 @@
-
-type Asset = {
-  identifier:string
-}
-export type Purchase = {
-  id:string
-  asset:Asset
-  price:number
-  capital: number
-  data:Date
-}
+import { Button } from "@/components/Button"
+import { Purchase } from "@/services/portfolio/dto/purchase.dto"
+import { portfolioService } from "@/services/portfolio/portfolio-service"
+import { portfolioStore } from "@/store/portfolioStore"
+import { useCallback } from "react"
 
 type PurchaseListProps = {
-  purchases: Purchase[]
+    portfolioId:string
+    purchases: Purchase[]
 }
 
 function PurchaseList(props:PurchaseListProps) {
-  const {purchases} = props
+    const {purchases,portfolioId} = props
+    const {updatePortfolio} = portfolioStore()
+
+    const deletePurchase = useCallback( async (purchaseId:string) => {
+        const response = await portfolioService.removePurchase(portfolioId, purchaseId)
+        updatePortfolio(response)
+    },[portfolioId, updatePortfolio])
+
   return (
-    <div className="rounded overflow-hidden">
+    <div className="rounded overflow-hidden mb-11">
       <table className="w-full text-sm text-left rtl:text-right text-zinc-500 dark:text-zinc-400">
           <thead className="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400">
               <tr>
@@ -51,10 +53,14 @@ function PurchaseList(props:PurchaseListProps) {
                       {p.capital}
                   </td>
                   <td className="px-6 py-4">
-                      {p.data.toLocaleDateString()}
+                      {new Date(p.date).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                      Deletar {p.id}
+                    <Button 
+                        color="danger" 
+                        title="Deletar" 
+                        onClick={() => deletePurchase(p.id)}
+                    />
                   </td>
               </tr>
               ))}

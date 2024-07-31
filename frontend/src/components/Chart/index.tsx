@@ -1,38 +1,43 @@
 import { ApexOptions } from "apexcharts";
 import ReactApexChart from "react-apexcharts";
 
-const options:ApexOptions = {
-  chart: {
-    width: 380,
-    type: 'pie',
-  },
-  labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-  legend: {
-        show:true,
-        labels:{
-          colors:'#71717a'
-        }
-      },
-  responsive: [{
-    breakpoint: 470,
-    options: {
-      chart: {
-        width: 200
-      },
-      legend: {
-        show:true,
-        labels:{
-          colors:'#71717a'
-        },
-        position: 'bottom',
-      }
-    }
-  }]
+
+type ChartProps = {
+  labels: string[]
+  series: number[]
 }
 
-const series = [44, 55, 13, 43, 22]
+export function Chart (props: ChartProps) {
 
-export function Chart () {
+  const {labels,series} = props
+  const options:ApexOptions = {
+    chart: {
+      width: 380,
+      type: 'pie',
+    },
+    labels: labels,
+    legend: {
+          show:true,
+          labels:{
+            colors:'#71717a'
+          }
+        },
+    responsive: [{
+      breakpoint: 470,
+      options: {
+        chart: {
+          width: 200
+        },
+        legend: {
+          show:true,
+          labels:{
+            colors:'#71717a'
+          },
+          position: 'bottom',
+        }
+      }
+    }]
+  }
 
     return (
       <div>
