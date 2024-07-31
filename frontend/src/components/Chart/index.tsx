@@ -5,14 +5,15 @@ import ReactApexChart from "react-apexcharts";
 type ChartProps = {
   labels: string[]
   series: number[]
+  width:number
 }
 
 export function Chart (props: ChartProps) {
 
-  const {labels,series} = props
+  const {labels,series, width} = props
   const options:ApexOptions = {
     chart: {
-      width: 380,
+      width,
       type: 'pie',
     },
     labels: labels,

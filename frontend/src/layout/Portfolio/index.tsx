@@ -4,7 +4,7 @@ import { Header } from "@/components/Header"
 import PurchaseList from "./PurchaseList"
 import { Chart } from "@/components/Chart"
 import { PurchaseForm } from "./PurchaseForm"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo } from "react"
 import { portfolioService } from "@/services/portfolio/portfolio-service"
 import { Portfolio } from "@/services/portfolio/dto/portfolio.dto"
 import { boolean } from "zod"
@@ -12,6 +12,9 @@ import LoadingPage from "../Loading"
 import { portfolioStore } from "@/store/portfolioStore"
 import PortfolioNotFound from "./PortfolioNotFound"
 import { getInfoFromPurchases } from "@/utils/getInfoFromPurchases"
+import { Modal } from "@/components/Modal"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 // const purchases:Purchase[] = [
 //   {
@@ -50,6 +53,7 @@ type PortfolioProps = {
 function PortfolioLayout(props:PortfolioProps) {
   const {slug} = props
   const {portfolios} = portfolioStore()
+  const router = useRouter()
 
   const portfolio = useMemo(() =>portfolios.find(p => p.slug === slug),[portfolios,slug])
 
@@ -59,10 +63,24 @@ function PortfolioLayout(props:PortfolioProps) {
   [portfolio])
 
 
-  if (!portfolio) {
-    return <PortfolioNotFound slug={slug} />
-  }
   
+
+  const handleDeletePortfolio = useCallback(async()=>{
+    if (portfolio) {
+      try {
+        await portfolioService.delete(portfolio.id)
+        router.replace('/dashboard')
+        toast.success(`Portfolio ${portfolio.title} deletado com sucesso!`)
+      } catch (error) {
+        toast.error(`Portfolio ${portfolio.title} não pode ser deletado`)
+        
+      }
+    }
+  },[portfolio, router])
+
+  
+  
+  if (!portfolio) return <PortfolioNotFound slug={slug} />
   return (
     <>
     <Header/>
@@ -71,7 +89,24 @@ function PortfolioLayout(props:PortfolioProps) {
     <div className="flex-1 max-w-screen-xl">
       <div className="flex flex-row items-center justify-between flex-wrap">
         <h1 className="text-zinc-100 font-semibold text-xl">Carteira - {portfolio.title}</h1>
-        <Button title="Deletar Carteira" className="ml-2" color="danger"/>
+
+        <Modal
+          buttonProps={{title:'Deletar Carteira', color:'danger'}} 
+          title="Deletar Carteira"
+          cancel={{
+                title:'Cancelar', 
+                color:'basic'
+           }}
+          confirm={{
+                title:'Deletar', 
+                onClick:handleDeletePortfolio,
+                color:'danger'
+           }}
+        >
+          <p className="text-zinc-500">
+          Você realmente deseja Excluir esta carteira?
+          </p>
+        </Modal>
       </div>
 
       <div className="mt-5 flex flex-col gap-3">
@@ -87,6 +122,7 @@ function PortfolioLayout(props:PortfolioProps) {
           </div>
           <div className="">
             <Chart
+              width={360}
               labels={labels}
               series={series}
             />
@@ -95,7 +131,7 @@ function PortfolioLayout(props:PortfolioProps) {
 
         <PurchaseForm portfolioId={portfolio.id}/>
         <PurchaseList portfolioId={portfolio.id} purchases={portfolio.purchases}/>
-      </div>    
+      </div>
     </div>
     </div>
     <Footer/>

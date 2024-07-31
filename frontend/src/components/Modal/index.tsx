@@ -2,11 +2,11 @@ import React, { ReactNode, useCallback } from "react";
 import { Button, ButtonProps } from "../Button";
 import { X } from "lucide-react";
 
-type SaveButton = {
+type ConfirmButton = ButtonProps & {
   title:string
   onClick?:() => void
 }
-type CancelButton = {
+type CancelButton = ButtonProps & {
   title:string
   onClick?:() => void
 }
@@ -15,11 +15,11 @@ type ModalProps = {
   title:string
   buttonProps: ButtonProps
   children: ReactNode
-  save?: SaveButton
+  confirm?: ConfirmButton
   cancel?: CancelButton
 }
 export function Modal(props:ModalProps) {
-  const {title, buttonProps,cancel,save,children} = props
+  const {title, buttonProps,cancel,confirm,children} = props
 
   const [showModal, setShowModal] = React.useState(false);
 
@@ -29,11 +29,13 @@ export function Modal(props:ModalProps) {
   const openModal = useCallback(()=>{
     setShowModal(true)
   },[])
+
   const handleSave = useCallback(()=>{
     setShowModal(false)
-    if (save?.onClick) save?.onClick()
+    if (confirm?.onClick) confirm?.onClick()
     
-  },[save])
+  },[confirm])
+
   const handleCancel = useCallback(()=>{
     setShowModal(false)
     if(cancel?.onClick) cancel?.onClick()
@@ -78,16 +80,15 @@ export function Modal(props:ModalProps) {
                   {cancel && (
                     <Button
                       type="button"
-                      color="danger"
+                      {...cancel}
                       onClick={handleCancel}
-                      title={cancel.title}
                     />
                   )}
-                  {save && (
+                  {confirm && (
                     <Button
                       type="button"
+                      {...confirm}
                       onClick={handleSave}
-                      title={save.title}
                     />
                   )}
                 </div>

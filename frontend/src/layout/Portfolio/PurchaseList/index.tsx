@@ -3,6 +3,7 @@ import { Purchase } from "@/services/portfolio/dto/purchase.dto"
 import { portfolioService } from "@/services/portfolio/portfolio-service"
 import { portfolioStore } from "@/store/portfolioStore"
 import { useCallback } from "react"
+import { toast } from "react-toastify"
 
 type PurchaseListProps = {
     portfolioId:string
@@ -14,8 +15,14 @@ function PurchaseList(props:PurchaseListProps) {
     const {updatePortfolio} = portfolioStore()
 
     const deletePurchase = useCallback( async (purchaseId:string) => {
-        const response = await portfolioService.removePurchase(portfolioId, purchaseId)
-        updatePortfolio(response)
+        try {
+            const response = await portfolioService.removePurchase(portfolioId, purchaseId)
+            updatePortfolio(response)
+            toast.success('Compra deletada com sucesso!')
+        } catch (error) {
+            toast.error('Ocorreu um erro!')
+            
+        }
     },[portfolioId, updatePortfolio])
 
   return (

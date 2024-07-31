@@ -15,21 +15,26 @@ import { Portfolio } from './dto/portfolio.dto'
   }
 
   async list(): Promise<Portfolio[]> {
-   const response = await this.httpService.get('/portfolios','')
+   const response = await this.httpService.get('/portfolios')
    return response.data
   }
 
   async findBySlug(slug: string): Promise<Portfolio> {
-   const response = await this.httpService.get(`/portfolios/${slug}`,'')
+   const response = await this.httpService.get(`/portfolios/${slug}`)
    return response.data
   }
 
-  async addPurchase(id:string ,dto: CreatePurchaseDto): Promise<CreatePurchaseResponseDto> {
+  async delete(id: string): Promise<Portfolio> {
+   const response = await this.httpService.delete(`/portfolios/${id}`)
+   return response.data
+  }
+
+  async addPurchase(id:string ,dto: CreatePurchaseDto): Promise<Portfolio> {
    const response = await this.httpService.put(`/portfolios/${id}/add-purchase`,dto)
    return response.data
   }
 
-  async removePurchase(id:string , purchaseId: string): Promise<RemovePurchaseResponseDto> {
+  async removePurchase(id:string , purchaseId: string): Promise<Portfolio> {
    const response = await this.httpService.delete(
     `/portfolios/${id}/remove-purchase/${purchaseId}`,
   )
