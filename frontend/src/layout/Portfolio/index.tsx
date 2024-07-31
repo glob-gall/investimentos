@@ -6,45 +6,13 @@ import { Chart } from "@/components/Chart"
 import { PurchaseForm } from "./PurchaseForm"
 import { useCallback, useMemo } from "react"
 import { portfolioService } from "@/services/portfolio/portfolio-service"
-import { Portfolio } from "@/services/portfolio/dto/portfolio.dto"
-import { boolean } from "zod"
-import LoadingPage from "../Loading"
+
 import { portfolioStore } from "@/store/portfolioStore"
 import PortfolioNotFound from "./PortfolioNotFound"
-import { getInfoFromPurchases } from "@/utils/getInfoFromPurchases"
+import { getInfoFromPurchases } from "@/utils/get-Info-from-purchases"
 import { Modal } from "@/components/Modal"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
-
-// const purchases:Purchase[] = [
-//   {
-//     id:'1',
-//     data: new Date(),
-//     asset:{
-//       identifier:'AA1',
-//     },
-//     capital:1000.120,
-//     price:52.100
-//   },
-//   {
-//     id:'12',
-//     data: new Date(),
-//     asset:{
-//       identifier:'BTC',
-//     },
-//     capital:1470.120,
-//     price:553.100
-//   },
-//   {
-//     id:'13',
-//     data: new Date(),
-//     asset:{
-//       identifier:'MNR',
-//     },
-//     capital:34.120,
-//     price:98.100
-//   }
-// ] 
 
 type PortfolioProps = {
   slug: string
@@ -53,6 +21,7 @@ type PortfolioProps = {
 function PortfolioLayout(props:PortfolioProps) {
   const {slug} = props
   const {portfolios} = portfolioStore()
+  
   const router = useRouter()
 
   const portfolio = useMemo(() =>portfolios.find(p => p.slug === slug),[portfolios,slug])
@@ -61,9 +30,6 @@ function PortfolioLayout(props:PortfolioProps) {
   const {labels,series,sum} = useMemo(
     ()=> getInfoFromPurchases(portfolio?.purchases || []),
   [portfolio])
-
-
-  
 
   const handleDeletePortfolio = useCallback(async()=>{
     if (portfolio) {
@@ -78,7 +44,6 @@ function PortfolioLayout(props:PortfolioProps) {
     }
   },[portfolio, router])
 
-  
   
   if (!portfolio) return <PortfolioNotFound slug={slug} />
   return (

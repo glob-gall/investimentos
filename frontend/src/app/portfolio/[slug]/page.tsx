@@ -1,5 +1,6 @@
 "use client"
 import Portfolio from "@/layout/Portfolio";
+import ProtectedPage from "@/layout/ProtectedPage";
 
 type Props = {
   params: {
@@ -10,7 +11,11 @@ type Props = {
 
 function PortfolioPage(props:Props) {
   
-  return <Portfolio slug={props.params.slug}/>
+  return (
+    <ProtectedPage>
+      <Portfolio slug={props.params.slug}/>
+    </ProtectedPage>
+    )
 }
 
 export default PortfolioPage

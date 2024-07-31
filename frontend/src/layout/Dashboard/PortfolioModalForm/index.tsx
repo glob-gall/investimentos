@@ -13,11 +13,13 @@ import { portfolioStore } from "@/store/portfolioStore";
 const PortfolioFormSchema = z.object({
   title: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}),
 })
+
 type PortfolioFormData = z.infer<typeof PortfolioFormSchema>
 
 type PortfolioFormModalProps = {
   buttonProps:ButtonProps
 }
+
 export function PortfolioFormModal(props:PortfolioFormModalProps) {
   const {setPortfolios} = portfolioStore()
   const {buttonProps} = props

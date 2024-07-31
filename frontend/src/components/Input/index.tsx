@@ -15,7 +15,7 @@ const inputVariats = tv({
   }
 })
 
-type InputProps = ComponentProps<'input'> & 
+export type InputProps = ComponentProps<'input'> & 
 VariantProps<typeof inputVariats> & {
   placeholder?:string
   label?:string,

@@ -1,21 +1,23 @@
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { InputMoney } from "@/components/InputMoney";
 import { AppError } from "@/services/http/dto/app-error";
 import { portfolioService } from "@/services/portfolio/portfolio-service";
 import { portfolioStore } from "@/store/portfolioStore";
+import { brazilianRealRegex } from "@/utils/regex/brazilian-real-regex";
+import { notNumber } from "@/utils/regex/not-number";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
-
 type PurchaseFormProps = {
   portfolioId:string
 }
 
 const LoginFormSchema = z.object({
-  price: z.coerce.number({message:'Deve ser um número'}).min(1, {message:'Campo obrigatório'}),
-  amount: z.coerce.number({message:'Deve ser um número'}).min(1,{message:'Campo obrigatório'}),
+  price: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}).regex(brazilianRealRegex,{message:'Campo obrigatório'}),
+  amount: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}).regex(brazilianRealRegex,{message:'Campo obrigatório'}),
   assetIdentifier: z.string({message:'Campo obrigatório'}).min(2,{message:'Campo obrigatório'}),
 })
 type LoginFormData = z.infer<typeof LoginFormSchema>
@@ -31,15 +33,20 @@ export function PurchaseForm(props:PurchaseFormProps){
 
     setLoading(true)
     try {
+      const formatedAmount = Number(dto.amount.replaceAll(notNumber,''))/100
+      const formatedPrice = Number(dto.price.replaceAll(notNumber,''))/100
+     
+      
       const response = await portfolioService.addPurchase(portfolioId, {
         assetIdentifier:dto.assetIdentifier,
-        capital:dto.amount,
-        price:dto.price
+        capital:formatedAmount,
+        price:formatedPrice
       })
-      updatePortfolio(response)
       
+      updatePortfolio(response)
       toast.success(`Compra cadastrada com sucesso!`);
     } catch (err) {
+      
       const error:AppError = err as AppError
 
       if (error.response.status === 401) {
@@ -52,12 +59,13 @@ export function PurchaseForm(props:PurchaseFormProps){
 
     
     setLoading(false)
-  },[loading, portfolioId])
+  },[loading, portfolioId, updatePortfolio])
   
   const {
     register,
     handleSubmit,
     control,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver:zodResolver(LoginFormSchema)
@@ -75,14 +83,12 @@ export function PurchaseForm(props:PurchaseFormProps){
           control={control}
           name="price"
           render={({ field }) => (
-            <Input
+            <InputMoney
               id='price'
               label="Preço" 
-              placeholder="Preço"
               error={errors.price}
               haveError={!!errors.price}
               {...field} 
-              type="number"
             />
           )}
         />
@@ -90,7 +96,7 @@ export function PurchaseForm(props:PurchaseFormProps){
           control={control}
           name="amount"
           render={({ field }) => (
-            <Input
+            <InputMoney
               id='amount'
               label="Valor Investido" 
               placeholder="Valor Investido"

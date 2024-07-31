@@ -54,10 +54,10 @@ function PurchaseList(props:PurchaseListProps) {
                       {p.asset.identifier}
                   </th>
                   <td className="px-6 py-4">
-                      {p.price}
+                      R$ {Number(p.price).toFixed(2)}
                   </td>
                   <td className="px-6 py-4">
-                      {p.capital}
+                      R$ {Number(p.capital).toFixed(2)}
                   </td>
                   <td className="px-6 py-4">
                       {new Date(p.date).toLocaleDateString()}

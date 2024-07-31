@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Chart } from "../Chart";
 import { Portfolio } from "@/services/portfolio/dto/portfolio.dto";
 import { useMemo } from "react";
-import { getInfoFromPurchases } from "@/utils/getInfoFromPurchases";
+import { getInfoFromPurchases } from "@/utils/get-Info-from-purchases";
 
 // type PortfolioCardProps = {
 //   portfolio: Portfolio

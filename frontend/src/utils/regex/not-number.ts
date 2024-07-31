@@ -1,0 +1,1 @@
+export const notNumber = /[^0-9]*/g
