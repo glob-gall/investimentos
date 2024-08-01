@@ -2,6 +2,7 @@ import httpService, { HttpService } from '../http/http-service'
 import {  CreatePortfolioDto,CreatePortfolioResponseDto } from './dto/create-portfolio.dto'
 import { CreatePurchaseDto, CreatePurchaseResponseDto, RemovePurchaseResponseDto } from './dto/create-purchase.dto'
 import { Portfolio } from './dto/portfolio.dto'
+import { UpdatePortfolioDto } from './dto/update-portfolio.dto'
 
  export class PortfolioService {
   private httpService: HttpService
@@ -11,6 +12,10 @@ import { Portfolio } from './dto/portfolio.dto'
 
   async create(dto: CreatePortfolioDto): Promise<CreatePortfolioResponseDto> {
    const response = await this.httpService.put('/users/add-portfolio',dto)
+   return response.data
+  }
+  async update(id:string, dto: UpdatePortfolioDto): Promise<Portfolio> {
+   const response = await this.httpService.put(`/portfolios/${id}`,dto)
    return response.data
   }
 

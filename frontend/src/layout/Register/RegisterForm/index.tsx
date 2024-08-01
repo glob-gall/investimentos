@@ -40,7 +40,7 @@ function RegisterForm() {
     } catch (err) {
       const error:AppError = err as AppError
       if (error.response.status === 401) {
-        toast.error('Credenciais incorretas');
+        toast.error('Façoa login novamente');
       }else {
         toast.error('Ocorreu um erro inesperado');
       }

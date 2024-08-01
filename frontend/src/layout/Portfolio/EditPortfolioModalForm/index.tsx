@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { X } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import { Button, ButtonProps } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { portfolioService } from "@/services/portfolio/portfolio-service";
 import { portfolioStore } from "@/store/portfolioStore";
+import { Portfolio } from "@/services/portfolio/dto/portfolio.dto";
+import { useRouter } from "next/navigation";
 
 const PortfolioFormSchema = z.object({
   title: z.string({message:'Campo obrigatório'}).min(1,{message:'Campo obrigatório'}),
@@ -16,18 +18,15 @@ const PortfolioFormSchema = z.object({
 
 type PortfolioFormData = z.infer<typeof PortfolioFormSchema>
 
-type PortfolioFormModalProps = {
-  buttonProps:ButtonProps
-}
 
-export function PortfolioFormModal(props:PortfolioFormModalProps) {
-  const {setPortfolios} = portfolioStore()
-  const {buttonProps} = props
+type EditPortfolioFormModalProps = {
+  portfolio:Portfolio
+}
+export function EditPortfolioFormModal(props: EditPortfolioFormModalProps) {
+  const {portfolio} = props
+  const {updatePortfolio} = portfolioStore()
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = React.useState(false);
-
-  const closeModal = useCallback(()=>{setShowModal(false)},[])
-  const openModal = useCallback(()=>{setShowModal(true)},[])
 
   const {
     handleSubmit,
@@ -35,20 +34,22 @@ export function PortfolioFormModal(props:PortfolioFormModalProps) {
     setValue,
     formState: { errors },
   } = useForm<PortfolioFormData>({
+    defaultValues:{
+      title:portfolio.title,
+    },
     resolver:zodResolver(PortfolioFormSchema)
   })  
 
-  const handleLogin:SubmitHandler<PortfolioFormData> = useCallback(async (dto:PortfolioFormData)=>{
+  const handleEditPortfolio:SubmitHandler<PortfolioFormData> = useCallback(async (dto:PortfolioFormData)=>{
     if (loading) return;
 
     try {
       setLoading(true)
-      const response = await portfolioService.create(dto)
+      const response = await portfolioService.update(portfolio.id,dto)
       console.log(response);
-      setPortfolios(response.portfolios)
+      updatePortfolio(response)
       
-      toast.success(`Carteira ${dto.title} criada com sucesso!`);
-      setValue("title",'')
+      toast.success(`Carteira editada com sucesso!`);
     } catch (err) {
       const error = err as AppError
       if (error.response.status === 401) {
@@ -58,16 +59,24 @@ export function PortfolioFormModal(props:PortfolioFormModalProps) {
         toast.error('Ocorreu um erro inesperado');
       }
     }
-    
+    setShowModal(false)
     setLoading(false)
-  },[loading, setPortfolios,setValue])
+  },[loading, portfolio.id, updatePortfolio])
+
+  const closeModal = useCallback(()=>{
+    setShowModal(false)
+    setValue("title",portfolio.title)
+  },[portfolio,setValue])
+  const openModal = useCallback(()=>{setShowModal(true)},[])
 
   return (
     <>
-      <Button
-        {...buttonProps}
+      <button
         onClick={openModal}
-      />
+        className="p-2 rounded-full hover:bg-zinc-700 duration-200"
+      >
+        <Pencil className="text-zinc-500" size={18}/>
+      </button>
 
       {showModal ? (
         <>
@@ -80,7 +89,7 @@ export function PortfolioFormModal(props:PortfolioFormModalProps) {
                 {/*header*/}
                 <div className="flex justify-between  rounded-t">
                   <h3 className="text-2xl font-semibold text-zinc-50 mt-2">
-                    Nova Carteira
+                    Editar Carteira
                   </h3>
                   <button
                     className="p-1  rounded-md duration-200 hover:bg-zinc-700 ml-2 mb-2"
@@ -94,7 +103,7 @@ export function PortfolioFormModal(props:PortfolioFormModalProps) {
                 {/*body*/}
                 <div className="relative py-4 flex-auto">
 
-                <form onSubmit={handleSubmit(handleLogin)} className="mt-4">
+                <form onSubmit={handleSubmit(handleEditPortfolio)} className="mt-4">
                   <Controller
                     control={control}
                     name="title"

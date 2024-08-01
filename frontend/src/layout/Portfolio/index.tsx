@@ -1,4 +1,3 @@
-import { Button } from "@/components/Button"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import PurchaseList from "./PurchaseList"
@@ -13,6 +12,7 @@ import { getInfoFromPurchases } from "@/utils/get-Info-from-purchases"
 import { Modal } from "@/components/Modal"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { EditPortfolioFormModal } from "./EditPortfolioModalForm"
 
 type PortfolioProps = {
   slug: string
@@ -78,8 +78,11 @@ function PortfolioLayout(props:PortfolioProps) {
 
         <div className="bg-zinc-800 p-4 rounded flex flex-row justify-between">
           <div className="flex flex-col justify-between">
-            <div>
-              <p className="text-lg text-zinc-500 mb-auto">{portfolio.title}</p>
+            <div className="flex flex-row justify-center items-center">
+              <p className="text-lg text-zinc-500 mr-1">
+                {portfolio.title}
+              </p>
+              <EditPortfolioFormModal portfolio={portfolio}/>
             </div>
             <div className="mt-auto">
               <p className="text-lg text-zinc-500 font-bold">R$ {sum.toFixed(2)}</p>
