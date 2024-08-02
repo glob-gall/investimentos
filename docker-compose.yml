@@ -2,6 +2,8 @@ version: "3"
 services:
   database:
     image: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
     container_name: database-investimentos-psql
     ports:
       - 5432:5432
@@ -11,21 +13,21 @@ services:
       POSTGRES_USER: app-investimentos
       POSTGRES_DB: app-investimentos
       POSTGRES_PASSWORD: strongPasswordXD
-  # backend:
-  #   container_name: backend
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./backend:/var/www
-  #     - /var/www/node_modules
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - my-network
-  #   depends_on:
-  #     - "database"
+
+  test-database:
+    image: postgres
+    container_name: database-investimentos-test
+    ports:
+      - 5433:5432
+    networks:
+      - test-network
+    environment:
+      POSTGRES_USER: test-investimentos
+      POSTGRES_DB: test-investimentos
+      POSTGRES_PASSWORD: strongPasswordXD
 
 networks:
   investment-network:
+    driver: bridge
+  test-network:
     driver: bridge
