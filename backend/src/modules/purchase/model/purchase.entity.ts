@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -22,7 +23,13 @@ export class Purchase {
   @Column('date')
   date: Date;
 
-  @ManyToOne(() => Portfolio, (portfolio) => portfolio.purchases)
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @ManyToOne(() => Portfolio, (portfolio) => portfolio.purchases, {
+    cascade: true,
+    onDelete: 'SET NULL',
+  })
   portfolio: Portfolio;
 
   @ManyToOne(() => Asset, (asset) => asset.purchases)

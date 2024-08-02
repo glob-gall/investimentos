@@ -23,9 +23,9 @@ export class UserDto {
       this.name = user.name;
       this.id = user.id;
       this.role = user.role;
-      if (user.portfolios) {
-        this.portfolios = user.portfolios.map((p) => new PortfolioDto(p));
-      }
+      this.portfolios = user.portfolios
+        ? user.portfolios.map((p) => new PortfolioDto(p))
+        : [];
     }
   }
 }

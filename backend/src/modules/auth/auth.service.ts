@@ -24,6 +24,10 @@ export class AuthService {
 
   async validateUser(dto: AuthDto) {
     const user = await this.userService.findByEmail(dto.email);
+    if (!user) {
+      throw new UnauthorizedException('user.not_found');
+    }
+
     const isValid = await compare(dto.password, user.password);
 
     if (!isValid) {
@@ -33,6 +37,6 @@ export class AuthService {
 
     const jwt = this.jwtService.sign({ ...userDto });
     // return jwt;
-    return { token: jwt };
+    return { token: jwt, user: userDto };
   }
 }

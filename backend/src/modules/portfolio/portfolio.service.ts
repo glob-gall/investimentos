@@ -12,6 +12,7 @@ import { Portfolio } from './model/portfolio.entity';
 import slugify from 'slugify';
 import { PurchaseService } from '../purchase/purchase.service';
 import { CreatePurchaseDto } from '../purchase/dto/create-purchase.dto';
+import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 
 @Injectable()
 export class PortfolioService {
@@ -58,8 +59,21 @@ export class PortfolioService {
       where: {
         user: { id: userId },
       },
+      relations: {
+        purchases: {
+          asset: true,
+        },
+      },
     });
     return portfolios;
+  }
+  async update(userId: string, id: string, dto: UpdatePortfolioDto) {
+    const portfolio = await this.findById(userId, id);
+
+    portfolio.title = dto.title;
+    await this.portfoliosRepository.save(portfolio);
+
+    return portfolio;
   }
 
   async findById(userId: string, id: string) {
@@ -134,19 +148,18 @@ export class PortfolioService {
 
   async removePurchase(userId: string, id: string, purchaseId: string) {
     const portfolio = await this.findById(userId, id);
+
     try {
       const purchase = await this.purchaseService.findById(purchaseId);
-      console.log(purchase);
 
-      if (purchase.portfolio.id !== id) {
+      if (purchase.portfolio.id !== portfolio.id) {
         throw new UnauthorizedException('purchase.not_yours');
       }
-      await this.purchaseService.deleteById(purchaseId);
+      const purchases = portfolio.purchases.filter((p) => p.id !== purchaseId);
+      portfolio.purchases = purchases;
 
-      portfolio.purchases.filter((p) => p.id !== purchase.id);
-      this.portfoliosRepository.save(portfolio);
-
-      return purchase;
+      await this.portfoliosRepository.save(portfolio);
+      return portfolio;
     } catch (error) {
       throw new BadRequestException(error);
     }

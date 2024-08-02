@@ -16,8 +16,8 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { LoggedUser } from 'src/decorators/user.decorator';
 import { User } from '../user/model/user.entity';
 import { UserRole } from '../user/enum/user-role.enum';
-import { PurchaseDto } from '../purchase/dto/purchase.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 
 @ApiTags('Portfolios')
 @Controller('portfolios')
@@ -41,7 +41,23 @@ export class PortfolioController {
   @Get()
   async findAll(@LoggedUser() loggedUser: User) {
     const portfolios = await this.portfolioService.findAll(loggedUser.id);
+    console.log(portfolios);
+
     return portfolios.map((u) => new PortfolioDto(u));
+  }
+
+  @Put('/:id')
+  async update(
+    @LoggedUser() loggedUser: User,
+    @Param('id') id: string,
+    @Body() body: UpdatePortfolioDto,
+  ) {
+    const portfolio = await this.portfolioService.update(
+      loggedUser.id,
+      id,
+      body,
+    );
+    return new PortfolioDto(portfolio);
   }
 
   @Get('/:slug')
@@ -82,12 +98,14 @@ export class PortfolioController {
     @Param('id') id: string,
     @Param('purchaseId') purchaseId: string,
   ) {
-    const deletedPurchase = await this.portfolioService.removePurchase(
+    console.log(loggedUser);
+
+    const portfolio = await this.portfolioService.removePurchase(
       loggedUser.id,
       id,
       purchaseId,
     );
 
-    return new PurchaseDto(deletedPurchase);
+    return new PortfolioDto(portfolio);
   }
 }

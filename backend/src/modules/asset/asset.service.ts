@@ -17,14 +17,16 @@ export class AssetService {
   ) {}
 
   async create(dto: CreateAssetDto) {
+    const identifierUpperCase = dto.identifier.toUpperCase();
     try {
       const findedAsset = await this.assetsRepository.findOne({
-        where: { identifier: dto.identifier },
+        where: { identifier: identifierUpperCase },
       });
+
       if (findedAsset) return findedAsset;
 
       const asset = new Asset({
-        identifier: dto.identifier,
+        identifier: identifierUpperCase,
       });
 
       const createdAsset = await this.assetsRepository.save(asset);
@@ -53,8 +55,6 @@ export class AssetService {
     }
   }
   async findByIdentifier(identifier: string) {
-    console.log(identifier);
-
     try {
       const asset = await this.assetsRepository.findOne({
         where: { identifier },
@@ -69,14 +69,15 @@ export class AssetService {
   }
 
   async findOrCreate(identifier: string) {
+    const identifierUpperCase = identifier.toUpperCase();
     try {
       let asset = await this.assetsRepository.findOne({
-        where: { identifier },
+        where: { identifier: identifierUpperCase },
       });
 
       if (!asset) {
         asset = new Asset({
-          identifier: identifier,
+          identifier: identifierUpperCase,
         });
         asset = await this.assetsRepository.save(asset);
       }

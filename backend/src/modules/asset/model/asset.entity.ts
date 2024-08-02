@@ -1,4 +1,5 @@
 import { Purchase } from 'src/modules/purchase/model/purchase.entity';
+// import { Purchase } from '@/modules/purchase/model/purchase.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()

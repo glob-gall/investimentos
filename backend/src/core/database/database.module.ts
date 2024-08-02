@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -13,7 +12,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_DB'),
         autoLoadEntities: true,
+        // entities: ['src/**/*.entity{.ts,.js}'],
         synchronize: configService.get('DATABASE_SYNC'),
+        migrations: ['src/core/database/migrations/*.ts'],
       }),
       inject: [ConfigService],
     }),

@@ -11,11 +11,26 @@ async function bootstrap() {
     .setTitle('Invest+')
     .setDescription('plataforma de investimentos')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'enter your JWT token',
+      },
+      'JWT-auth',
+    )
     .build();
+  // .addApiKey({ type: 'apiKey', name: 'API_KEY', in: 'header' }, 'api_key')
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  app.enableCors({
+    // origin: '*',
+    origin: 'http://localhost:3000',
+  });
+  await app.listen(3333);
 }
 bootstrap();

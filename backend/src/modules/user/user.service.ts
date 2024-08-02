@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -56,7 +55,11 @@ export class UserService {
           id,
         },
         relations: {
-          portfolios: true,
+          portfolios: {
+            purchases: {
+              asset: true,
+            },
+          },
         },
       });
 
@@ -113,9 +116,6 @@ export class UserService {
 
   async removePortFolio(userId: string, portfolioId: string) {
     const portfolio = await this.portfolioService.findById(userId, portfolioId);
-    if (portfolio.id !== userId) {
-      throw new UnauthorizedException('portfolio.not_yours');
-    }
 
     try {
       await this.portfolioService.deleteById(userId, portfolioId);

@@ -60,8 +60,8 @@ export class PurchaseService {
       const purchase = await this.purchasesRepository.findOne({
         where: { id },
       });
-      if (!purchase) throw new NotFoundException('purchase.not_found');
 
+      if (!purchase) throw new NotFoundException('purchase.not_found');
       await this.purchasesRepository.delete(purchase);
 
       return purchase;

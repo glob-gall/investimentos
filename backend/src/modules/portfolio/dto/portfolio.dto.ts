@@ -23,9 +23,9 @@ export class PortfolioDto {
       if (portfolio.user) {
         this.user = new UserDto(portfolio.user);
       }
-      if (portfolio.purchases) {
-        this.purchases = portfolio.purchases.map((p) => new PurchaseDto(p));
-      }
+      this.purchases = portfolio.purchases
+        ? portfolio.purchases.map((p) => new PurchaseDto(p))
+        : [];
     }
   }
 }
