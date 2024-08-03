@@ -44,7 +44,6 @@ export function PortfolioFormModal(props:PortfolioFormModalProps) {
     try {
       setLoading(true)
       const response = await portfolioService.create(dto)
-      console.log(response);
       setPortfolios(response.portfolios)
       
       toast.success(`Carteira ${dto.title} criada com sucesso!`);

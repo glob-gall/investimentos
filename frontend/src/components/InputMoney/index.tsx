@@ -1,6 +1,5 @@
-import { ChangeEvent, ComponentProps, useState } from 'react';
-import { FieldError } from 'react-hook-form';
-import { tv, VariantProps } from 'tailwind-variants';
+import { ChangeEvent } from 'react';
+
 import { Input, InputProps } from '../Input';
 
 
@@ -9,8 +8,6 @@ type InputMoneyProps = InputProps & {
 
 export function InputMoney(props:InputMoneyProps) {
   const {id,label,placeholder,error,haveError, className,value,onChange, ...rest} = props
-  // const [value, setValue] = useState('');
-  // const setValue = onChange 
 
   const formatMonetaryValue = (value:string) => {
     const cleanValue = Number(value.replace(/[^\d]/g, ''));
@@ -42,11 +39,3 @@ export function InputMoney(props:InputMoneyProps) {
     />
   )
 }
-{/* <CurrencyInput
-      id="input-example"
-      name="input-name"
-      placeholder="Please enter a number"
-      defaultValue={0}
-      decimalsLimit={2}
-      onValueChange={(value, name, values) => console.log(value, name, values)}
-    /> */}

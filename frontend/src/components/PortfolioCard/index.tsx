@@ -11,7 +11,6 @@ import { getInfoFromPurchases } from "@/utils/get-Info-from-purchases";
 export function PortfolioCard(props: Portfolio) {
   const {slug,title,purchases} = props  
   const {labels,series,sum} = useMemo(()=> getInfoFromPurchases(purchases),[purchases])
-  console.log(props);
   
   
 

@@ -46,7 +46,6 @@ export function EditPortfolioFormModal(props: EditPortfolioFormModalProps) {
     try {
       setLoading(true)
       const response = await portfolioService.update(portfolio.id,dto)
-      console.log(response);
       updatePortfolio(response)
       
       toast.success(`Carteira editada com sucesso!`);

@@ -32,7 +32,6 @@ export class PortfolioController {
   ) {
     if (loggedUser.role === UserRole.Admin) {
       const portfolio = await this.portfolioService.create(body);
-      console.log(portfolio);
 
       return new PortfolioDto(portfolio);
     }
@@ -41,7 +40,6 @@ export class PortfolioController {
   @Get()
   async findAll(@LoggedUser() loggedUser: User) {
     const portfolios = await this.portfolioService.findAll(loggedUser.id);
-    console.log(portfolios);
 
     return portfolios.map((u) => new PortfolioDto(u));
   }
@@ -98,8 +96,6 @@ export class PortfolioController {
     @Param('id') id: string,
     @Param('purchaseId') purchaseId: string,
   ) {
-    console.log(loggedUser);
-
     const portfolio = await this.portfolioService.removePurchase(
       loggedUser.id,
       id,
