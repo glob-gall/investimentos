@@ -2,8 +2,6 @@ version: "3"
 services:
   database:
     image: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
     container_name: database-investimentos-psql
     ports:
       - 5432:5432
