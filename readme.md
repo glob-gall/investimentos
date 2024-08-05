@@ -9,7 +9,8 @@ O Invest+ é um gerenciador de carteiras de investimento. Suas funcionalidades s
   
 
 Principais tecnologias: **TypeScript**, **NestJS**, **TypeORM**, **Jest**, **NextJS**, **TailwindCSS**
-
+### Documentação
+a documentação das rotas do backend podem ser encontradas em http://localhost:3333/api
 ### UI 
 ![dashboard](https://github.com/user-attachments/assets/ab25c1ac-2377-4a52-a4fc-176c8efbb454)
 ![carteira](https://github.com/user-attachments/assets/df51e779-5874-4df1-8581-e23621fdd153)
